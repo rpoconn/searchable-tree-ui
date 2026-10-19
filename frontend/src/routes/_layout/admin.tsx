@@ -1,33 +1,20 @@
 import { useSuspenseQuery } from "@tanstack/react-query"
-import { createFileRoute, redirect } from "@tanstack/react-router"
+import { createFileRoute } from "@tanstack/react-router"
+import { Plus } from "lucide-react"
 import { Suspense } from "react"
 
-import { type UserPublic, UsersService } from "@/client"
-import AddUser from "@/components/admin/AddUser"
-import { columns, type UserTableData } from "@/components/admin/columns"
+import { UserDialog } from "@/components/admin/UserDialog"
+import * as UserAdminService from "@/components/admin/userAdminService"
+import { type UserTableData, userColumns } from "@/components/admin/userColumns"
+import * as AuthService from "@/components/auth/authService"
 import { DataTable } from "@/components/common/DataTable"
 import PendingUsers from "@/components/pending/PendingUsers"
+import { Button } from "@/components/ui/Button"
 import useAuth from "@/hooks/useAuth"
-
-function getUsersQueryOptions() {
-    return {
-        queryFn: async () =>
-            (await UsersService.readUsers({ query: { skip: 0, limit: 100 } }))
-                .data,
-        queryKey: ["users"],
-    }
-}
 
 export const Route = createFileRoute("/_layout/admin")({
     component: Admin,
-    beforeLoad: async () => {
-        const { data: user } = await UsersService.readUserMe()
-        if (!user.is_superuser) {
-            throw redirect({
-                to: "/",
-            })
-        }
-    },
+    beforeLoad: () => AuthService.requireRole((user) => !!user.is_superuser),
     head: () => ({
         meta: [
             {
@@ -39,22 +26,14 @@ export const Route = createFileRoute("/_layout/admin")({
 
 function UsersTableContent() {
     const { user: currentUser } = useAuth()
-    const { data: users } = useSuspenseQuery(getUsersQueryOptions())
+    const { data: users } = useSuspenseQuery(UserAdminService.usersQuery())
 
-    const tableData: UserTableData[] = users.data.map((user: UserPublic) => ({
+    const tableData: UserTableData[] = users.data.map((user) => ({
         ...user,
         isCurrentUser: currentUser?.id === user.id,
     }))
 
-    return <DataTable columns={columns} data={tableData} />
-}
-
-function UsersTable() {
-    return (
-        <Suspense fallback={<PendingUsers />}>
-            <UsersTableContent />
-        </Suspense>
-    )
+    return <DataTable columns={userColumns} data={tableData} />
 }
 
 function Admin() {
@@ -67,9 +46,18 @@ function Admin() {
                         Manage user accounts and permissions
                     </p>
                 </div>
-                <AddUser />
+                <UserDialog
+                    trigger={
+                        <Button className="my-4">
+                            <Plus className="mr-2" />
+                            Add User
+                        </Button>
+                    }
+                />
             </div>
-            <UsersTable />
+            <Suspense fallback={<PendingUsers />}>
+                <UsersTableContent />
+            </Suspense>
         </div>
     )
 }

@@ -1,6 +1,7 @@
-import { createFileRoute, Outlet, redirect } from "@tanstack/react-router"
+import { createFileRoute, Outlet } from "@tanstack/react-router"
 import { LogOut } from "lucide-react"
 
+import * as AuthService from "@/components/auth/authService"
 import { Footer } from "@/components/common/Footer"
 import { AppSidebar } from "@/components/sidebar/AppSidebar"
 import { Button } from "@/components/ui/Button"
@@ -9,17 +10,11 @@ import {
     SidebarProvider,
     SidebarTrigger,
 } from "@/components/ui/Sidebar"
-import useAuth, { isLoggedIn } from "@/hooks/useAuth"
+import useAuth from "@/hooks/useAuth"
 
 export const Route = createFileRoute("/_layout")({
     component: Layout,
-    beforeLoad: async () => {
-        if (!isLoggedIn()) {
-            throw redirect({
-                to: "/login",
-            })
-        }
-    },
+    beforeLoad: AuthService.requireLogin,
 })
 
 function Layout() {

@@ -3,38 +3,26 @@ import { useMutation } from "@tanstack/react-query"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 
-import { type UpdatePassword, UsersService } from "@/client"
+import * as AuthService from "@/components/auth/authService"
 import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from "@/components/ui/Form"
+    confirmPasswordField,
+    passwordField,
+    passwordsMatch,
+} from "@/components/common/formSchemas"
+import { TextFormField } from "@/components/common/TextFormField"
+import { Form } from "@/components/ui/Form"
 import { LoadingButton } from "@/components/ui/LoadingButton"
-import { PasswordInput } from "@/components/ui/PasswordInput"
 import useCustomToast from "@/hooks/useCustomToast"
-import { setAccessToken } from "@/lib/authToken"
 
-const formSchema = z
-    .object({
-        current_password: z
-            .string()
-            .min(1, { message: "Password is required" })
-            .min(8, { message: "Password must be at least 8 characters" }),
-        new_password: z
-            .string()
-            .min(1, { message: "Password is required" })
-            .min(8, { message: "Password must be at least 8 characters" }),
-        confirm_password: z
-            .string()
-            .min(1, { message: "Password confirmation is required" }),
-    })
-    .refine((data) => data.new_password === data.confirm_password, {
-        message: "The passwords don't match",
-        path: ["confirm_password"],
-    })
+const formSchema = passwordsMatch(
+    z.object({
+        current_password: passwordField,
+        new_password: passwordField,
+        confirm_password: confirmPasswordField,
+    }),
+    "new_password",
+    "confirm_password",
+)
 
 type FormData = z.infer<typeof formSchema>
 
@@ -52,86 +40,48 @@ const ChangePassword = () => {
     })
 
     const mutation = useMutation({
-        mutationFn: (data: UpdatePassword) =>
-            UsersService.updatePasswordMe({ body: data }),
-        onSuccess: ({ data }) => {
-            // The change revoked every older token, this tab's included
-            setAccessToken(data.access_token)
+        mutationFn: AuthService.changePassword,
+        onSuccess: () => {
             showSuccessToast("Password updated successfully")
             form.reset()
         },
         onError: showApiError,
     })
 
-    const onSubmit = async (data: FormData) => {
-        mutation.mutate(data)
-    }
-
     return (
         <div className="max-w-md">
             <h3 className="text-lg font-semibold py-4">Change Password</h3>
             <Form {...form}>
                 <form
-                    onSubmit={form.handleSubmit(onSubmit)}
+                    onSubmit={form.handleSubmit((data) =>
+                        mutation.mutate(data),
+                    )}
                     className="flex flex-col gap-4"
                 >
-                    <FormField
+                    <TextFormField
                         control={form.control}
                         name="current_password"
-                        render={({ field, fieldState }) => (
-                            <FormItem>
-                                <FormLabel>Current Password</FormLabel>
-                                <FormControl>
-                                    <PasswordInput
-                                        data-testid="current-password-input"
-                                        placeholder="••••••••"
-                                        aria-invalid={fieldState.invalid}
-                                        {...field}
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
+                        label="Current Password"
+                        placeholder="••••••••"
+                        testId="current-password-input"
+                        password
                     />
-
-                    <FormField
+                    <TextFormField
                         control={form.control}
                         name="new_password"
-                        render={({ field, fieldState }) => (
-                            <FormItem>
-                                <FormLabel>New Password</FormLabel>
-                                <FormControl>
-                                    <PasswordInput
-                                        data-testid="new-password-input"
-                                        placeholder="••••••••"
-                                        aria-invalid={fieldState.invalid}
-                                        {...field}
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
+                        label="New Password"
+                        placeholder="••••••••"
+                        testId="new-password-input"
+                        password
                     />
-
-                    <FormField
+                    <TextFormField
                         control={form.control}
                         name="confirm_password"
-                        render={({ field, fieldState }) => (
-                            <FormItem>
-                                <FormLabel>Confirm Password</FormLabel>
-                                <FormControl>
-                                    <PasswordInput
-                                        data-testid="confirm-password-input"
-                                        placeholder="••••••••"
-                                        aria-invalid={fieldState.invalid}
-                                        {...field}
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
+                        label="Confirm Password"
+                        placeholder="••••••••"
+                        testId="confirm-password-input"
+                        password
                     />
-
                     <LoadingButton
                         type="submit"
                         loading={mutation.isPending}

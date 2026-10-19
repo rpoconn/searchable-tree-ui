@@ -9,7 +9,7 @@ export type UserTableData = UserPublic & {
     isCurrentUser: boolean
 }
 
-export const columns: ColumnDef<UserTableData>[] = [
+export const userColumns: ColumnDef<UserTableData>[] = [
     {
         accessorKey: "full_name",
         header: "Full Name",

@@ -1,21 +1,17 @@
-import { createFileRoute, redirect } from "@tanstack/react-router"
+import { createFileRoute } from "@tanstack/react-router"
 import { Suspense } from "react"
 
-import { UsersService } from "@/client"
+import * as AuthService from "@/components/auth/authService"
 import { JurisdictionGrid } from "@/components/jurisdictions/JurisdictionGrid"
 import { Skeleton } from "@/components/ui/Skeleton"
 import useAuth from "@/hooks/useAuth"
 
 export const Route = createFileRoute("/_layout/companyAdmin")({
     component: CompanyAdmin,
-    beforeLoad: async () => {
-        const { data: user } = await UsersService.readUserMe()
-        if (!user.is_superuser && user.company_role !== "admin") {
-            throw redirect({
-                to: "/",
-            })
-        }
-    },
+    beforeLoad: () =>
+        AuthService.requireRole(
+            (user) => user.is_superuser || user.company_role === "admin",
+        ),
     head: () => ({
         meta: [
             {

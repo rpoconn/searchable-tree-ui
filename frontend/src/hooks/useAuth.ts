@@ -1,56 +1,26 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
 
-import {
-    type Body_login_login_access_token as AccessToken,
-    LoginService,
-    type UserPublic,
-    type UserRegister,
-    UsersService,
-} from "@/client"
-import {
-    clearAccessToken,
-    getAccessToken,
-    setAccessToken,
-} from "@/lib/authToken"
+import * as AuthService from "@/components/auth/authService"
 import useCustomToast from "./useCustomToast"
-
-const isLoggedIn = () => {
-    return getAccessToken() !== null
-}
 
 const useAuth = () => {
     const navigate = useNavigate()
     const queryClient = useQueryClient()
     const { showApiError } = useCustomToast()
 
-    const { data: user } = useQuery<UserPublic | null, Error>({
-        queryKey: ["currentUser"],
-        queryFn: async () => (await UsersService.readUserMe()).data,
-        enabled: isLoggedIn(),
-    })
+    const { data: user } = useQuery(AuthService.currentUserQuery())
 
     const signUpMutation = useMutation({
-        mutationFn: (data: UserRegister) =>
-            UsersService.registerUser({ body: data }),
+        mutationFn: AuthService.register,
         onSuccess: () => {
             navigate({ to: "/login" })
         },
         onError: showApiError,
-        onSettled: () => {
-            queryClient.invalidateQueries({ queryKey: ["users"] })
-        },
     })
 
-    const login = async (data: AccessToken) => {
-        const response = await LoginService.loginAccessToken({
-            body: data,
-        })
-        setAccessToken(response.data.access_token)
-    }
-
     const loginMutation = useMutation({
-        mutationFn: login,
+        mutationFn: AuthService.login,
         onSuccess: () => {
             navigate({ to: "/" })
         },
@@ -58,11 +28,7 @@ const useAuth = () => {
     })
 
     const logout = async () => {
-        try {
-            // Revoke the token server-side; log out locally even if this fails
-            await LoginService.logout()
-        } catch {}
-        clearAccessToken()
+        await AuthService.logout()
         // Drop cached data so the next user doesn't see the previous user's
         queryClient.clear()
         navigate({ to: "/login" })
@@ -76,5 +42,4 @@ const useAuth = () => {
     }
 }
 
-export { isLoggedIn }
 export default useAuth

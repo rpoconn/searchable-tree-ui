@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form"
 import { z } from "zod"
 
 import { UsersService, type UserUpdateMe } from "@/client"
+import { emailField } from "@/components/common/formSchemas"
 import { Button } from "@/components/ui/Button"
 import {
     Form,
@@ -22,7 +23,7 @@ import { cn } from "@/lib/utils"
 
 const formSchema = z.object({
     full_name: z.string().max(30).optional(),
-    email: z.email({ message: "Invalid email address" }),
+    email: emailField,
 })
 
 type FormData = z.infer<typeof formSchema>
