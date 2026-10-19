@@ -3,7 +3,6 @@ import type { AgGridReact } from "ag-grid-react"
 import { useMemo, useRef, useState } from "react"
 
 import type { UserPublic } from "@/client"
-import { MuiThemeProvider } from "@/components/common/MuiThemeProvider"
 import { JurisdictionGridService as Service } from "@/components/jurisdictions/grid/JurisdictionGridService"
 import { JurisdictionTable } from "@/components/jurisdictions/grid/JurisdictionTable"
 import { useJurisdictionRowSource } from "@/components/jurisdictions/grid/useJurisdictionRowSource"
@@ -88,63 +87,60 @@ export function JurisdictionGrid({
     )
 
     return (
-        <MuiThemeProvider>
-            <div className="flex flex-col gap-4">
-                <ScopeBanner
+        <div className="flex flex-col gap-4">
+            <ScopeBanner
+                mode={mode}
+                canEditCompany={canEditCompany}
+                lockedCount={facets.summary.locked ?? 0}
+            />
+            <JurisdictionToolbar
+                mode={mode}
+                search={filters.search}
+                onSearchChange={setSearch}
+                status={filters.status}
+                counts={facets.status_counts}
+                onStatusChange={setStatus}
+                facets={toolbarFacets}
+                onFacetChange={setFacet}
+                filtering={Service.hasFilters(filters)}
+                onClear={clear}
+                onExpandAll={rows.expandAll}
+                onCollapseAll={rows.collapseAll}
+                onViewSelection={() => setSelectionOpen(true)}
+            />
+            <div className="relative overflow-hidden rounded-md">
+                <JurisdictionTable
+                    gridRef={gridRef}
+                    datasource={rows.source}
                     mode={mode}
-                    canEditCompany={canEditCompany}
-                    lockedCount={facets.summary.locked ?? 0}
+                    showUserCounts={mode === "company" && canEditCompany}
+                    context={context}
                 />
-                <JurisdictionToolbar
-                    mode={mode}
-                    search={filters.search}
-                    onSearchChange={setSearch}
-                    status={filters.status}
-                    counts={facets.status_counts}
-                    onStatusChange={setStatus}
-                    facets={toolbarFacets}
-                    onFacetChange={setFacet}
-                    filtering={Service.hasFilters(filters)}
-                    onClear={clear}
-                    onExpandAll={rows.expandAll}
-                    onCollapseAll={rows.collapseAll}
-                    onViewSelection={() => setSelectionOpen(true)}
-                />
-                <div className="relative overflow-hidden rounded-md">
-                    <JurisdictionTable
-                        gridRef={gridRef}
-                        datasource={rows.source}
-                        mode={mode}
-                        showUserCounts={mode === "company" && canEditCompany}
-                        context={context}
-                    />
-                    {/* Ancestors only show above a match, so no matches means no rows */}
-                    {Service.hasFilters(queried) &&
-                        facets.summary.shown === 0 && (
-                            <NoMatches
-                                allTaken={Service.allLicensedTaken(
-                                    queried,
-                                    companyIds.length,
-                                )}
-                                onClear={clear}
-                            />
+                {/* Ancestors only show above a match, so no matches means no rows */}
+                {Service.hasFilters(queried) && facets.summary.shown === 0 && (
+                    <NoMatches
+                        allTaken={Service.allLicensedTaken(
+                            queried,
+                            companyIds.length,
                         )}
-                </div>
-                <SelectionSheet
-                    open={selectionOpen}
-                    onOpenChange={setSelectionOpen}
-                    mode={mode}
-                    entries={selectionEntries}
-                    count={enabledIds.length}
-                />
-                <ConfirmDisableDialog
-                    open={editor.disableDialog.open}
-                    pending={editor.disableDialog.item}
-                    companyName={company.name}
-                    onCancel={editor.cancelDisable}
-                    onConfirm={editor.confirmDisable}
-                />
+                        onClear={clear}
+                    />
+                )}
             </div>
-        </MuiThemeProvider>
+            <SelectionSheet
+                open={selectionOpen}
+                onOpenChange={setSelectionOpen}
+                mode={mode}
+                entries={selectionEntries}
+                count={enabledIds.length}
+            />
+            <ConfirmDisableDialog
+                open={editor.disableDialog.open}
+                pending={editor.disableDialog.item}
+                companyName={company.name}
+                onCancel={editor.cancelDisable}
+                onConfirm={editor.confirmDisable}
+            />
+        </div>
     )
 }

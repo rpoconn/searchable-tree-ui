@@ -1,5 +1,5 @@
-import Tooltip from "@mui/material/Tooltip"
 import { Minus, Plus } from "lucide-react"
+import { InfoTooltip } from "@/components/common/InfoTooltip"
 import type {
     JurisdictionGridContext,
     JurisdictionRow,
@@ -32,8 +32,8 @@ export function SelectAllControl({
             : ""
     return (
         <div className="flex items-center gap-1 text-xs">
-            <Tooltip
-                title={
+            <InfoTooltip
+                content={
                     subtree.total === 0 ? (
                         `Nothing in ${j.name} is enabled for your license`
                     ) : (
@@ -51,11 +51,9 @@ export function SelectAllControl({
                         </span>
                     )
                 }
-                placement="left"
+                side="left"
                 // The button says what it does; the tooltip is only for the details
-                enterDelay={2000}
-                enterNextDelay={2000}
-                arrow
+                delay={2000}
             >
                 {/* A disabled button gets no pointer events, so the wrapper
                     carries the tooltip */}
@@ -88,7 +86,7 @@ export function SelectAllControl({
                         {allAvailable ? "Clear all" : "Select all"}
                     </Button>
                 </span>
-            </Tooltip>
+            </InfoTooltip>
             {/* A count only once something is on; "0 of n" is noise */}
             {subtree.enabled > 0 && (
                 <span className="tabular-nums text-muted-foreground">

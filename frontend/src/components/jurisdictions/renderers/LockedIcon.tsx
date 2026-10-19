@@ -1,6 +1,6 @@
-import Tooltip from "@mui/material/Tooltip"
 import { CircleOff } from "lucide-react"
 
+import { InfoTooltip } from "@/components/common/InfoTooltip"
 import { cn } from "@/lib/utils"
 
 const SUPPORT_EMAIL = "support@daptic.ai"
@@ -8,8 +8,8 @@ const SUPPORT_EMAIL = "support@daptic.ai"
 // Marks a jurisdiction the license doesn't cover, and points to support
 export function LockedIcon({ className }: { className?: string }) {
     return (
-        <Tooltip
-            title={
+        <InfoTooltip
+            content={
                 <span>
                     Contact{" "}
                     <a
@@ -21,11 +21,8 @@ export function LockedIcon({ className }: { className?: string }) {
                     to add more jurisdictions to your license.
                 </span>
             }
-            placement="top"
-            enterDelay={150}
-            // Time to move onto the tooltip's link
-            leaveDelay={200}
-            arrow
+            side="top"
+            delay={150}
         >
             <span
                 role="img"
@@ -34,6 +31,6 @@ export function LockedIcon({ className }: { className?: string }) {
             >
                 <CircleOff className="size-3.5 text-muted-foreground" />
             </span>
-        </Tooltip>
+        </InfoTooltip>
     )
 }

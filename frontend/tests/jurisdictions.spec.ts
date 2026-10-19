@@ -18,7 +18,7 @@ const TEXAS = "United States / States / Texas"
 const WYOMING = "United States / States / Wyoming"
 const CALIFORNIA = "United States / States / California"
 
-// The tabs' accessible names are their tooltips, so match the label
+// The tabs' accessible names include their counts, so match the label
 const statusTab = (page: Page, label: string) =>
     page
         .getByRole("tablist", { name: "Filter by status" })

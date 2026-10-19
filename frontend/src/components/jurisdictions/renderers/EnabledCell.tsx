@@ -1,5 +1,5 @@
-import Tooltip from "@mui/material/Tooltip"
 import type { ICellRendererParams } from "ag-grid-community"
+import { InfoTooltip } from "@/components/common/InfoTooltip"
 import { ToggleSwitch } from "@/components/common/ToggleSwitch"
 import type {
     JurisdictionGridContext,
@@ -27,9 +27,9 @@ export function EnabledCell({
     const scope = mode === "company" ? "for the company" : "for me"
     return (
         <div className="flex h-full items-center gap-0.5">
-            <Tooltip
-                title={
-                    disabledReason ? (
+            <InfoTooltip
+                content={
+                    disabledReason && (
                         <span className="flex flex-col gap-1">
                             <span>{disabledReason}</span>
                             {unlock?.kind === "company" && (
@@ -53,19 +53,14 @@ export function EnabledCell({
                                 </a>
                             )}
                         </span>
-                    ) : (
-                        ""
                     )
                 }
-                placement="left"
-                enterDelay={150}
-                // Time to move onto the tooltip's link
-                leaveDelay={unlock ? 200 : 0}
-                arrow
+                side="left"
+                delay={150}
             >
-                {/* A disabled input gets no pointer or focus events, so the wrapper
-                    carries the tooltip and is focusable for keyboard users. An empty
-                    title shows no tooltip. */}
+                {/* A disabled switch gets no pointer or focus events, so the wrapper
+                    carries the tooltip and is focusable for keyboard users. No
+                    reason shows no tooltip. */}
                 <span tabIndex={disabledReason ? 0 : undefined}>
                     <ToggleSwitch
                         checked={checked}
@@ -74,7 +69,7 @@ export function EnabledCell({
                         onChange={(on) => context.toggleEnabled(j.id, on)}
                     />
                 </span>
-            </Tooltip>
+            </InfoTooltip>
             {/* A fully locked subtree shows its lock by select-all instead */}
             {data.locked && subtree?.total !== 0 && <LockedIcon />}
         </div>

@@ -1,10 +1,8 @@
-import Switch from "@mui/material/Switch"
 import { Check } from "lucide-react"
 
-import { cn } from "@/lib/utils"
+import { Switch } from "@/components/ui/Switch"
 
-// App colors rather than MUI's palette, so it matches the rest of the UI. "&&&"
-// repeats the root class to outrank MUI's checked/disabled rules.
+// A white knob that shows a check when on, over a track in the app's colors
 export function ToggleSwitch({
     checked,
     disabled,
@@ -16,37 +14,18 @@ export function ToggleSwitch({
     label: string
     onChange: (checked: boolean) => void
 }) {
-    // The knob shows a check when on
-    const thumb = (
-        <span
-            className={cn(
-                "flex size-4 items-center justify-center rounded-full bg-white shadow-sm ring-1 ring-black/10 transition-colors",
-                checked && "text-primary",
-            )}
-        >
-            {checked && <Check className="size-3" strokeWidth={3.5} />}
-        </span>
-    )
     return (
         <Switch
-            size="small"
             checked={checked}
             disabled={disabled}
-            onChange={(e) => onChange(e.target.checked)}
-            icon={thumb}
-            checkedIcon={thumb}
-            sx={{
-                opacity: disabled ? 0.45 : 1,
-                "&&& .MuiSwitch-switchBase + .MuiSwitch-track": {
-                    backgroundColor: checked
-                        ? "var(--primary)"
-                        : "color-mix(in oklch, var(--muted-foreground) 45%, transparent)",
-                    opacity: 1,
-                },
-            }}
-            slotProps={{ input: { "aria-label": label } }}
+            aria-label={label}
+            onCheckedChange={onChange}
+            // No pointer events when disabled, so a wrapper can carry a tooltip
+            className="disabled:pointer-events-none disabled:opacity-45 data-[state=unchecked]:bg-muted-foreground/45 dark:data-[state=unchecked]:bg-muted-foreground/45"
+            thumbClassName="bg-white text-primary shadow-sm ring-1 ring-black/10 dark:data-[state=checked]:bg-white dark:data-[state=unchecked]:bg-white"
+            thumbContent={
+                checked && <Check className="size-3" strokeWidth={3.5} />
+            }
         />
     )
 }
-
-export default ToggleSwitch

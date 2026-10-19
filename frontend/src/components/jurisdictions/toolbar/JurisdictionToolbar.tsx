@@ -1,4 +1,3 @@
-import Tooltip from "@mui/material/Tooltip"
 import {
     ChevronsDownUp,
     ChevronsUpDown,
@@ -12,7 +11,8 @@ import {
 } from "lucide-react"
 
 import type { JurisdictionFacet, RegionType } from "@/client"
-import { MultiSelectFilter } from "@/components/common/autocomplete/MultiSelectFilter"
+import { InfoTooltip } from "@/components/common/InfoTooltip"
+import { MultiSelectFilter } from "@/components/common/MultiSelectFilter"
 import { flagUrlForKeys } from "@/components/jurisdictions/flags"
 import type {
     JurisdictionMode,
@@ -102,79 +102,85 @@ export function JurisdictionToolbar({
                         onStatusChange(value as StatusFilter)
                     }
                 >
+                    {/* Each tooltip sits on a wrapper: on the tab itself it would
+                        replace the tab's data-state, which drives its styling */}
                     <TabsList
                         aria-label="Filter by status"
                         className="h-10 rounded-lg border p-1"
                     >
-                        <Tooltip
-                            title={statusHints[mode].all}
-                            placement="bottom"
-                            enterDelay={1500}
-                            arrow
+                        <InfoTooltip
+                            content={statusHints[mode].all}
+                            side="bottom"
+                            delay={1500}
                         >
-                            <TabsTrigger value="all" className="px-3">
-                                <Layers className="text-muted-foreground" />
-                                All
-                                <span className="text-xs tabular-nums text-muted-foreground">
-                                    {counts.all}
-                                </span>
-                            </TabsTrigger>
-                        </Tooltip>
-                        <Tooltip
-                            title={statusHints[mode].enabled}
-                            placement="bottom"
-                            enterDelay={1500}
-                            arrow
+                            <span className="flex h-full">
+                                <TabsTrigger value="all" className="px-3">
+                                    <Layers className="text-muted-foreground" />
+                                    All
+                                    <span className="text-xs tabular-nums text-muted-foreground">
+                                        {counts.all}
+                                    </span>
+                                </TabsTrigger>
+                            </span>
+                        </InfoTooltip>
+                        <InfoTooltip
+                            content={statusHints[mode].enabled}
+                            side="bottom"
+                            delay={1500}
                         >
-                            <TabsTrigger
-                                value="enabled"
-                                className="group px-3 data-[state=active]:text-primary"
-                            >
-                                <CircleCheck className="text-muted-foreground group-data-[state=active]:text-primary" />
-                                Enabled
-                                <span className="text-xs tabular-nums text-muted-foreground">
-                                    {counts.enabled}
-                                </span>
-                            </TabsTrigger>
-                        </Tooltip>
+                            <span className="flex h-full">
+                                <TabsTrigger
+                                    value="enabled"
+                                    className="group px-3 data-[state=active]:text-primary"
+                                >
+                                    <CircleCheck className="text-muted-foreground group-data-[state=active]:text-primary" />
+                                    Enabled
+                                    <span className="text-xs tabular-nums text-muted-foreground">
+                                        {counts.enabled}
+                                    </span>
+                                </TabsTrigger>
+                            </span>
+                        </InfoTooltip>
                         {/* For the company the license is its own selection, so
                             nothing is ever off but licensed */}
                         {mode === "user" && (
-                            <Tooltip
-                                title={statusHints[mode].available}
-                                placement="bottom"
-                                enterDelay={1500}
-                                arrow
+                            <InfoTooltip
+                                content={statusHints[mode].available}
+                                side="bottom"
+                                delay={1500}
                             >
+                                <span className="flex h-full">
+                                    <TabsTrigger
+                                        value="available"
+                                        className="group px-3 data-[state=active]:text-primary"
+                                    >
+                                        <CirclePlus className="text-muted-foreground group-data-[state=active]:text-primary" />
+                                        Available
+                                        <span className="text-xs tabular-nums text-muted-foreground">
+                                            {counts.available}
+                                        </span>
+                                    </TabsTrigger>
+                                </span>
+                            </InfoTooltip>
+                        )}
+                        <InfoTooltip
+                            content={statusHints[mode].disabled}
+                            side="bottom"
+                            delay={1500}
+                        >
+                            <span className="flex h-full">
                                 <TabsTrigger
-                                    value="available"
-                                    className="group px-3 data-[state=active]:text-primary"
+                                    value="disabled"
+                                    className="group px-3 data-[state=active]:text-destructive"
                                 >
-                                    <CirclePlus className="text-muted-foreground group-data-[state=active]:text-primary" />
-                                    Available
+                                    <CircleOff className="text-muted-foreground group-data-[state=active]:text-destructive" />
+                                    Disabled
                                     <span className="text-xs tabular-nums text-muted-foreground">
-                                        {counts.available}
+                                        {counts.disabled}
                                     </span>
                                 </TabsTrigger>
-                            </Tooltip>
-                        )}
-                        <Tooltip
-                            title={statusHints[mode].disabled}
-                            placement="bottom"
-                            enterDelay={1500}
-                            arrow
-                        >
-                            <TabsTrigger
-                                value="disabled"
-                                className="group px-3 data-[state=active]:text-destructive"
-                            >
-                                <CircleOff className="text-muted-foreground group-data-[state=active]:text-destructive" />
-                                Disabled
-                                <span className="text-xs tabular-nums text-muted-foreground">
-                                    {counts.disabled}
-                                </span>
-                            </TabsTrigger>
-                        </Tooltip>
+                            </span>
+                        </InfoTooltip>
                     </TabsList>
                 </Tabs>
                 <Button
