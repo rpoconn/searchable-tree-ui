@@ -61,6 +61,30 @@ Log in as `admin@example.com` / `changethis`. This superuser stands in for a Dap
 
 To reset the data, stop the backend, delete `backend/app.db`, and run `bash start_backend.bash` again. More detail is in [development.md](development.md).
 
+## Deploying to Render
+
+[render.yaml](render.yaml) is a [Render Blueprint](https://render.com/docs/infrastructure-as-code) that runs the whole app as one Docker web service. [render.Dockerfile](render.Dockerfile) builds the frontend and bakes it into the backend image, so FastAPI serves the API and the site from the same origin. There is no nginx container and no CORS setup.
+
+1. Push the repository to GitHub.
+2. In the Render dashboard, choose **New > Blueprint** and pick the repository.
+3. Render asks for `FIRST_SUPERUSER` (an email) and `FIRST_SUPERUSER_PASSWORD`. These are the login for the first admin. It generates `SECRET_KEY` and `SERVICE_API_KEY` itself.
+4. Apply. The first build takes a few minutes. Later pushes to `master` redeploy automatically.
+
+Each start runs the migrations and the seed before serving, the same as the local Docker setup.
+
+**The database.** The Blueprint uses Render's free plan, which has no persistent storage. SQLite is a file inside the container, so every deploy, restart or idle spin-down resets the database to the seed data: sign-ups and changes are lost, and the first admin is recreated from `FIRST_SUPERUSER`. A free service spins down after 15 minutes without traffic, and the next request takes up to a minute while it starts again.
+
+To keep the data, set `plan: starter` in `render.yaml` and add a disk to the service:
+
+```yaml
+disk:
+    name: data
+    mountPath: /data
+    sizeGB: 1
+```
+
+**Not set up.** The deployed app runs without `FASTAPI_ENV=development`, so it refuses `changethis` as the `SECRET_KEY` and leaves out the `/private` routes. No SMTP server is configured, so password-recovery and new-account emails aren't sent; add the `SMTP_*` and `EMAILS_FROM_EMAIL` variables in the Render dashboard to enable them. With a custom domain, also set `FRONTEND_HOST` to its URL so email links point there.
+
 ## What I built
 
 ### The two layers
@@ -162,7 +186,7 @@ This is a sample app built for an interview, not a production deployment. A code
 - **No rate limiting** on login, signup or password recovery.
 - **The access token is kept in `localStorage`**, not in an httpOnly cookie, and lasts 8 days.
 - **Changing your own email doesn't ask for your password**, and doesn't end your other sessions.
-- **The secrets are local defaults.** `.env` ships `SECRET_KEY=changethis` and a known admin password. The backend refuses to start with them unless `FASTAPI_ENV=development`, which the local `.env` sets.
+- **The secrets are local defaults.** `.env` ships `SECRET_KEY=changethis` and a known admin password. The backend refuses to start with that `SECRET_KEY` unless `FASTAPI_ENV=development`, which the local `.env` sets. The admin password is allowed anywhere, so a demo deployment can keep the login documented above.
 
 ## License
 
