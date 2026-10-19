@@ -148,5 +148,3 @@ export function JurisdictionGrid({
         </MuiThemeProvider>
     )
 }
-
-export default JurisdictionGrid

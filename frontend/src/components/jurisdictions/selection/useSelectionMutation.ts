@@ -58,5 +58,3 @@ export function useSelectionMutation(
         },
     })
 }
-
-export default useSelectionMutation

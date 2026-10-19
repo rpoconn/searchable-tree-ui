@@ -236,5 +236,3 @@ export function JurisdictionToolbar({
         </div>
     )
 }
-
-export default JurisdictionToolbar

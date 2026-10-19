@@ -107,5 +107,3 @@ export function NameCell({
         </div>
     )
 }
-
-export default NameCell

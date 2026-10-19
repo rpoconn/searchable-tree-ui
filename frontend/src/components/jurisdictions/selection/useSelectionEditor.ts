@@ -112,5 +112,3 @@ export function useSelectionEditor(
         confirmDisable,
     }
 }
-
-export default useSelectionEditor

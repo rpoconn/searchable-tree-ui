@@ -114,5 +114,3 @@ export class JurisdictionRowSource implements IDatasource {
             })
     }
 }
-
-export default JurisdictionRowSource

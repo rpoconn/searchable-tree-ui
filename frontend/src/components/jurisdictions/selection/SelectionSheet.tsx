@@ -90,5 +90,3 @@ export function SelectionSheet({
         </Sheet>
     )
 }
-
-export default SelectionSheet

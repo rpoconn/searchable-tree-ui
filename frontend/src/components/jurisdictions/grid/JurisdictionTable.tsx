@@ -112,5 +112,3 @@ export function JurisdictionTable({
         </div>
     )
 }
-
-export default JurisdictionTable

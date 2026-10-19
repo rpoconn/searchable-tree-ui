@@ -37,5 +37,3 @@ export function LockedIcon({ className }: { className?: string }) {
         </Tooltip>
     )
 }
-
-export default LockedIcon

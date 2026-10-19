@@ -80,5 +80,3 @@ export function EnabledCell({
         </div>
     )
 }
-
-export default EnabledCell

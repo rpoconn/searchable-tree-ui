@@ -27,5 +27,3 @@ export function NoMatches({
         </div>
     )
 }
-
-export default NoMatches

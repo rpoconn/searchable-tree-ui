@@ -82,5 +82,3 @@ export function useJurisdictionFilters(mode: JurisdictionMode) {
         clear,
     }
 }
-
-export default useJurisdictionFilters

@@ -3,8 +3,8 @@ import type { JurisdictionMode } from "@/components/jurisdictions/jurisdictionTy
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/Alert"
 import { cn } from "@/lib/utils"
 
-// Shared with the grid frame so the scope stays visible while scrolling
-export const scopeAccent: Record<JurisdictionMode, string> = {
+// Left border marking which scope the banner describes
+const scopeAccent: Record<JurisdictionMode, string> = {
     company: "border-l-4 border-l-amber-500",
     user: "border-l-4 border-l-sky-500",
 }
@@ -79,5 +79,3 @@ export function ScopeBanner({
         </Alert>
     )
 }
-
-export default ScopeBanner

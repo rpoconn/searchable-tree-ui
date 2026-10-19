@@ -2,7 +2,7 @@ import { createFileRoute, Outlet, redirect } from "@tanstack/react-router"
 import { LogOut } from "lucide-react"
 
 import { Footer } from "@/components/common/Footer"
-import AppSidebar from "@/components/sidebar/AppSidebar"
+import { AppSidebar } from "@/components/sidebar/AppSidebar"
 import { Button } from "@/components/ui/Button"
 import {
     SidebarInset,

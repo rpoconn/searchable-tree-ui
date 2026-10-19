@@ -100,5 +100,3 @@ export function SelectAllControl({
         </div>
     )
 }
-
-export default SelectAllControl

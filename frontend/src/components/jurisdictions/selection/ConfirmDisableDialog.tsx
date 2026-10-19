@@ -153,5 +153,3 @@ export function ConfirmDisableDialog({
         </Dialog>
     )
 }
-
-export default ConfirmDisableDialog

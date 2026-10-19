@@ -84,5 +84,3 @@ export function useJurisdictionRowSource(
 
     return { source, refresh, toggleExpanded, expandAll, collapseAll }
 }
-
-export default useJurisdictionRowSource
