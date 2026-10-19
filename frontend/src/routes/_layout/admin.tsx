@@ -8,6 +8,7 @@ import * as UserAdminService from "@/components/admin/userAdminService"
 import { type UserTableData, userColumns } from "@/components/admin/userColumns"
 import * as AuthService from "@/components/auth/authService"
 import { DataTable } from "@/components/common/DataTable"
+import { PageHeader } from "@/components/common/PageHeader"
 import PendingUsers from "@/components/pending/PendingUsers"
 import { Button } from "@/components/ui/Button"
 import useAuth from "@/hooks/useAuth"
@@ -39,22 +40,20 @@ function UsersTableContent() {
 function Admin() {
     return (
         <div className="flex flex-col gap-6">
-            <div className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-2xl font-bold tracking-tight">Users</h1>
-                    <p className="text-muted-foreground">
-                        Manage user accounts and permissions
-                    </p>
-                </div>
-                <UserDialog
-                    trigger={
-                        <Button className="my-4">
-                            <Plus className="mr-2" />
-                            Add User
-                        </Button>
-                    }
-                />
-            </div>
+            <PageHeader
+                title="Users"
+                description="Manage user accounts and permissions"
+                actions={
+                    <UserDialog
+                        trigger={
+                            <Button className="my-4">
+                                <Plus className="mr-2" />
+                                Add User
+                            </Button>
+                        }
+                    />
+                }
+            />
             <Suspense fallback={<PendingUsers />}>
                 <UsersTableContent />
             </Suspense>

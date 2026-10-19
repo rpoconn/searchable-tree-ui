@@ -3,8 +3,8 @@ import type { AgGridReact } from "ag-grid-react"
 import { useMemo, useRef, useState } from "react"
 
 import type { UserPublic } from "@/client"
-import { JurisdictionGridService as Service } from "@/components/jurisdictions/grid/JurisdictionGridService"
 import { JurisdictionTable } from "@/components/jurisdictions/grid/JurisdictionTable"
+import * as Service from "@/components/jurisdictions/grid/jurisdictionGridService"
 import { useJurisdictionRowSource } from "@/components/jurisdictions/grid/useJurisdictionRowSource"
 import type {
     JurisdictionGridContext,

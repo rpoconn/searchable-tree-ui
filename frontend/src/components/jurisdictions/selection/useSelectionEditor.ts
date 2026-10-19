@@ -1,7 +1,7 @@
 import type { AgGridReact } from "ag-grid-react"
 import { type RefObject, useCallback, useRef, useState } from "react"
 
-import { JurisdictionGridService as Service } from "@/components/jurisdictions/grid/JurisdictionGridService"
+import * as Service from "@/components/jurisdictions/grid/jurisdictionGridService"
 import type {
     JurisdictionMode,
     JurisdictionRow,

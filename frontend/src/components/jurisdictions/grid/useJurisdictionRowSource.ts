@@ -1,17 +1,14 @@
 import type { AgGridReact } from "ag-grid-react"
 import { type RefObject, useCallback, useEffect, useState } from "react"
-
-import {
-    type RowInputs,
-    JurisdictionGridService as Service,
-} from "@/components/jurisdictions/grid/JurisdictionGridService"
 import {
     JurisdictionRowSource,
     type RowMapper,
 } from "@/components/jurisdictions/grid/JurisdictionRowSource"
+import * as Service from "@/components/jurisdictions/grid/jurisdictionGridService"
 import type {
     JurisdictionFilters,
     JurisdictionRow,
+    RowInputs,
 } from "@/components/jurisdictions/jurisdictionTypes"
 import useCustomToast from "@/hooks/useCustomToast"
 

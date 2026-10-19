@@ -1,5 +1,5 @@
 import type { ColDef } from "ag-grid-community"
-import { JurisdictionGridService } from "@/components/jurisdictions/grid/JurisdictionGridService"
+import * as JurisdictionGridService from "@/components/jurisdictions/grid/jurisdictionGridService"
 import type {
     JurisdictionMode,
     JurisdictionRow,

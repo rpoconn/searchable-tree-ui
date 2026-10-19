@@ -2,7 +2,7 @@ import type { IDatasource, IGetRowsParams } from "ag-grid-community"
 
 import type { JurisdictionGridRow } from "@/client"
 import { preloadFlags } from "@/components/jurisdictions/flags"
-import { JurisdictionGridService as Service } from "@/components/jurisdictions/grid/JurisdictionGridService"
+import * as Service from "@/components/jurisdictions/grid/jurisdictionGridService"
 import type {
     JurisdictionFilters,
     JurisdictionMode,

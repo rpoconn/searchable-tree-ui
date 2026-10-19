@@ -1,6 +1,7 @@
 import { Link as RouterLink } from "@tanstack/react-router"
 import { ChevronsUpDown, LogOut, Settings } from "lucide-react"
 
+import type { UserPublic } from "@/client"
 import { Avatar, AvatarFallback } from "@/components/ui/Avatar"
 import {
     DropdownMenu,
@@ -20,8 +21,8 @@ import useAuth from "@/hooks/useAuth"
 import { getInitials } from "@/lib/utils"
 
 interface UserInfoProps {
-    fullName?: string
-    email?: string
+    fullName?: string | null
+    email: string
 }
 
 function UserInfo({ fullName, email }: UserInfoProps) {
@@ -44,7 +45,7 @@ function UserInfo({ fullName, email }: UserInfoProps) {
     )
 }
 
-export function User({ user }: { user: any }) {
+export function User({ user }: { user: UserPublic | null | undefined }) {
     const { logout } = useAuth()
     const { isMobile, setOpenMobile } = useSidebar()
 
@@ -54,9 +55,6 @@ export function User({ user }: { user: any }) {
         if (isMobile) {
             setOpenMobile(false)
         }
-    }
-    const handleLogout = async () => {
-        logout()
     }
 
     return (
@@ -70,8 +68,8 @@ export function User({ user }: { user: any }) {
                             data-testid="user-menu"
                         >
                             <UserInfo
-                                fullName={user?.full_name}
-                                email={user?.email}
+                                fullName={user.full_name}
+                                email={user.email}
                             />
                             <ChevronsUpDown className="ml-auto size-4 text-muted-foreground" />
                         </SidebarMenuButton>
@@ -84,8 +82,8 @@ export function User({ user }: { user: any }) {
                     >
                         <DropdownMenuLabel className="p-0 font-normal">
                             <UserInfo
-                                fullName={user?.full_name}
-                                email={user?.email}
+                                fullName={user.full_name}
+                                email={user.email}
                             />
                         </DropdownMenuLabel>
                         <DropdownMenuSeparator />
@@ -95,7 +93,7 @@ export function User({ user }: { user: any }) {
                                 User Settings
                             </DropdownMenuItem>
                         </RouterLink>
-                        <DropdownMenuItem onClick={handleLogout}>
+                        <DropdownMenuItem onClick={logout}>
                             <LogOut />
                             Log Out
                         </DropdownMenuItem>

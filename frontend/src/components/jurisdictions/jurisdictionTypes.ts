@@ -1,7 +1,10 @@
 import type {
+    CompanyAdmin,
+    CompanyPublic,
     JurisdictionGridRow,
     RegionType,
     SubtreeSelection,
+    UserPublic,
 } from "@/client"
 
 export type JurisdictionMode = "company" | "user"
@@ -64,4 +67,13 @@ export type JurisdictionGridContext = {
     toggleEnabled: (id: string, enabled: boolean) => void
     // Turns the row and everything under it on or off in one save
     toggleSubtree: (id: string, enabled: boolean) => void
+}
+
+// What a server row's grid state depends on beyond the row itself
+export type RowInputs = {
+    mode: JurisdictionMode
+    company: CompanyPublic
+    user: UserPublic
+    canEditCompany: boolean
+    admins?: CompanyAdmin[]
 }

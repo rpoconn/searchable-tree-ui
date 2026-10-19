@@ -22,9 +22,37 @@ const ICON_MAP: Record<Theme, LucideIcon> = {
     dark: Moon,
 }
 
+// The light / dark / system picks shared by both theme menus
+const ThemeMenuItems = () => {
+    const { setTheme } = useTheme()
+
+    return (
+        <>
+            <DropdownMenuItem
+                data-testid="light-mode"
+                onClick={() => setTheme("light")}
+            >
+                <Sun className="mr-2 h-4 w-4" />
+                Light
+            </DropdownMenuItem>
+            <DropdownMenuItem
+                data-testid="dark-mode"
+                onClick={() => setTheme("dark")}
+            >
+                <Moon className="mr-2 h-4 w-4" />
+                Dark
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setTheme("system")}>
+                <Monitor className="mr-2 h-4 w-4" />
+                System
+            </DropdownMenuItem>
+        </>
+    )
+}
+
 export const SidebarAppearance = () => {
     const { isMobile } = useSidebar()
-    const { setTheme, theme } = useTheme()
+    const { theme } = useTheme()
     const Icon = ICON_MAP[theme]
 
     return (
@@ -45,24 +73,7 @@ export const SidebarAppearance = () => {
                     align="end"
                     className="w-(--radix-dropdown-menu-trigger-width) min-w-56"
                 >
-                    <DropdownMenuItem
-                        data-testid="light-mode"
-                        onClick={() => setTheme("light")}
-                    >
-                        <Sun className="mr-2 h-4 w-4" />
-                        Light
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                        data-testid="dark-mode"
-                        onClick={() => setTheme("dark")}
-                    >
-                        <Moon className="mr-2 h-4 w-4" />
-                        Dark
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setTheme("system")}>
-                        <Monitor className="mr-2 h-4 w-4" />
-                        System
-                    </DropdownMenuItem>
+                    <ThemeMenuItems />
                 </DropdownMenuContent>
             </DropdownMenu>
         </SidebarMenuItem>
@@ -70,8 +81,6 @@ export const SidebarAppearance = () => {
 }
 
 export const Appearance = () => {
-    const { setTheme } = useTheme()
-
     return (
         <div className="flex items-center justify-center">
             <DropdownMenu modal={false}>
@@ -87,24 +96,7 @@ export const Appearance = () => {
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                    <DropdownMenuItem
-                        data-testid="light-mode"
-                        onClick={() => setTheme("light")}
-                    >
-                        <Sun className="mr-2 h-4 w-4" />
-                        Light
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                        data-testid="dark-mode"
-                        onClick={() => setTheme("dark")}
-                    >
-                        <Moon className="mr-2 h-4 w-4" />
-                        Dark
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setTheme("system")}>
-                        <Monitor className="mr-2 h-4 w-4" />
-                        System
-                    </DropdownMenuItem>
+                    <ThemeMenuItems />
                 </DropdownMenuContent>
             </DropdownMenu>
         </div>

@@ -1,10 +1,10 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { AxiosError } from "axios"
-import { JurisdictionGridService as Service } from "@/components/jurisdictions/grid/JurisdictionGridService"
+import * as Service from "@/components/jurisdictions/grid/jurisdictionGridService"
 import type { JurisdictionMode } from "@/components/jurisdictions/jurisdictionTypes"
 import useCustomToast from "@/hooks/useCustomToast"
 
-export type SubtreeChange = {
+type SubtreeChange = {
     rootId: string
     enabled: boolean
     // Whether the click was on the row's select-all button

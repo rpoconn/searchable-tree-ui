@@ -9,8 +9,8 @@ import {
 } from "ag-grid-community"
 import { AgGridReact } from "ag-grid-react"
 import { type RefObject, useMemo, useState } from "react"
-import { JurisdictionGridService } from "@/components/jurisdictions/grid/JurisdictionGridService"
 import { columnsFor } from "@/components/jurisdictions/grid/jurisdictionColumns"
+import * as JurisdictionGridService from "@/components/jurisdictions/grid/jurisdictionGridService"
 import type {
     JurisdictionGridContext,
     JurisdictionMode,

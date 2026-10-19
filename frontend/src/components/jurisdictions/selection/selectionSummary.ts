@@ -10,7 +10,7 @@ export type SelectionEntry = {
 }
 
 // Every selected jurisdiction as a flat list, in the grid's top-down order
-export function summarizeSelection(
+function summarizeSelection(
     tree: JurisdictionPublic[],
     enabledSet: Set<string>,
     isSelectable: (j: JurisdictionPublic) => boolean,
