@@ -14,7 +14,6 @@ import type {
     JurisdictionRow,
 } from "@/components/jurisdictions/jurisdictionTypes"
 import useCustomToast from "@/hooks/useCustomToast"
-import { handleError } from "@/utils"
 
 // The grid's row source, kept in step with the filters and with what the row
 // mapping reads. One source for the component's life, so expansion survives.
@@ -23,7 +22,7 @@ export function useJurisdictionRowSource(
     queried: JurisdictionFilters,
     { mode, company, user, canEditCompany, admins }: RowInputs,
 ) {
-    const { showErrorToast } = useCustomToast()
+    const { showApiError } = useCustomToast()
 
     const toRow = useCallback<RowMapper>(
         (r, highlight) =>
@@ -37,7 +36,7 @@ export function useJurisdictionRowSource(
     const [source] = useState(
         () =>
             new JurisdictionRowSource(mode, queried, toRow, (err) =>
-                handleError.call(showErrorToast, err as Error),
+                showApiError(err),
             ),
     )
 

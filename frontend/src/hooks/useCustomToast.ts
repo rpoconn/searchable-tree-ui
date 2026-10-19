@@ -1,4 +1,5 @@
 import { toast } from "sonner"
+import { getApiErrorMessage } from "@/lib/apiErrors"
 
 const useCustomToast = () => {
     const showSuccessToast = (description: string) => {
@@ -13,7 +14,11 @@ const useCustomToast = () => {
         })
     }
 
-    return { showSuccessToast, showErrorToast }
+    const showApiError = (err: unknown) => {
+        showErrorToast(getApiErrorMessage(err))
+    }
+
+    return { showSuccessToast, showErrorToast, showApiError }
 }
 
 export default useCustomToast

@@ -9,7 +9,6 @@ import type {
 import type { PendingDisable } from "@/components/jurisdictions/selection/ConfirmDisableDialog"
 import { useSelectionMutation } from "@/components/jurisdictions/selection/useSelectionMutation"
 import useCustomToast from "@/hooks/useCustomToast"
-import { handleError } from "@/utils"
 
 // The item is kept after closing so the dialog text doesn't blank out while
 // animating away
@@ -24,7 +23,7 @@ export function useSelectionEditor(
     // Runs once a save settles, to refresh what it changed in the grid
     onSaved: () => void,
 ) {
-    const { showErrorToast } = useCustomToast()
+    const { showApiError } = useCustomToast()
     const [disableDialog, setDisableDialog] = useState<DisableDialog>({
         open: false,
         item: null,
@@ -56,12 +55,12 @@ export function useSelectionEditor(
 
     // The grid may keep the first context it is given, so the handlers handed
     // to it never change and read live state through this ref
-    const latest = useRef({ mode, companyId, save, showErrorToast })
-    latest.current = { mode, companyId, save, showErrorToast }
+    const latest = useRef({ mode, companyId, save, showApiError })
+    latest.current = { mode, companyId, save, showApiError }
 
     const apply = useCallback(
         async (rowId: string, enabled: boolean, subtree: boolean) => {
-            const { mode, companyId, save, showErrorToast } = latest.current
+            const { mode, companyId, save, showApiError } = latest.current
             if (mode === "company" && !enabled) {
                 // Fetch fresh: someone may have opted in since the page loaded
                 const preview = await Service.previewDisable(
@@ -69,7 +68,7 @@ export function useSelectionEditor(
                     rowId,
                     subtree,
                 ).catch((err: Error) => {
-                    handleError.call(showErrorToast, err)
+                    showApiError(err)
                     return null
                 })
                 if (!preview) return

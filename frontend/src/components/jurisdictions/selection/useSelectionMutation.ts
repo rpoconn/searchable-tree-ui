@@ -3,7 +3,6 @@ import { AxiosError } from "axios"
 import { JurisdictionGridService as Service } from "@/components/jurisdictions/grid/JurisdictionGridService"
 import type { JurisdictionMode } from "@/components/jurisdictions/jurisdictionTypes"
 import useCustomToast from "@/hooks/useCustomToast"
-import { handleError } from "@/utils"
 
 export type SubtreeChange = {
     rootId: string
@@ -25,7 +24,7 @@ export function useSelectionMutation(
     onConflict: (change: SubtreeChange) => void,
 ) {
     const queryClient = useQueryClient()
-    const { showErrorToast } = useCustomToast()
+    const { showErrorToast, showApiError } = useCustomToast()
 
     return useMutation({
         mutationFn: ({ rootId, enabled, subtree, version }: SubtreeChange) =>
@@ -45,7 +44,7 @@ export function useSelectionMutation(
                 onConflict(change)
                 return
             }
-            handleError.call(showErrorToast, err)
+            showApiError(err)
         },
         onSettled: () => {
             queryClient.invalidateQueries({ queryKey: Service.keys.facets })

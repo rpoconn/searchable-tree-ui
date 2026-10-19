@@ -8,17 +8,21 @@ import {
     type UserRegister,
     UsersService,
 } from "@/client"
-import { handleError } from "@/utils"
+import {
+    clearAccessToken,
+    getAccessToken,
+    setAccessToken,
+} from "@/lib/authToken"
 import useCustomToast from "./useCustomToast"
 
 const isLoggedIn = () => {
-    return localStorage.getItem("access_token") !== null
+    return getAccessToken() !== null
 }
 
 const useAuth = () => {
     const navigate = useNavigate()
     const queryClient = useQueryClient()
-    const { showErrorToast } = useCustomToast()
+    const { showApiError } = useCustomToast()
 
     const { data: user } = useQuery<UserPublic | null, Error>({
         queryKey: ["currentUser"],
@@ -32,7 +36,7 @@ const useAuth = () => {
         onSuccess: () => {
             navigate({ to: "/login" })
         },
-        onError: handleError.bind(showErrorToast),
+        onError: showApiError,
         onSettled: () => {
             queryClient.invalidateQueries({ queryKey: ["users"] })
         },
@@ -42,7 +46,7 @@ const useAuth = () => {
         const response = await LoginService.loginAccessToken({
             body: data,
         })
-        localStorage.setItem("access_token", response.data.access_token)
+        setAccessToken(response.data.access_token)
     }
 
     const loginMutation = useMutation({
@@ -50,7 +54,7 @@ const useAuth = () => {
         onSuccess: () => {
             navigate({ to: "/" })
         },
-        onError: handleError.bind(showErrorToast),
+        onError: showApiError,
     })
 
     const logout = async () => {
@@ -58,7 +62,7 @@ const useAuth = () => {
             // Revoke the token server-side; log out locally even if this fails
             await LoginService.logout()
         } catch {}
-        localStorage.removeItem("access_token")
+        clearAccessToken()
         // Drop cached data so the next user doesn't see the previous user's
         queryClient.clear()
         navigate({ to: "/login" })

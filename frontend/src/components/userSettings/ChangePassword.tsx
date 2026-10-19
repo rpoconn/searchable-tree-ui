@@ -15,7 +15,7 @@ import {
 import { LoadingButton } from "@/components/ui/LoadingButton"
 import { PasswordInput } from "@/components/ui/PasswordInput"
 import useCustomToast from "@/hooks/useCustomToast"
-import { handleError } from "@/utils"
+import { setAccessToken } from "@/lib/authToken"
 
 const formSchema = z
     .object({
@@ -39,7 +39,7 @@ const formSchema = z
 type FormData = z.infer<typeof formSchema>
 
 const ChangePassword = () => {
-    const { showSuccessToast, showErrorToast } = useCustomToast()
+    const { showSuccessToast, showApiError } = useCustomToast()
     const form = useForm<FormData>({
         resolver: zodResolver(formSchema),
         mode: "onSubmit",
@@ -56,11 +56,11 @@ const ChangePassword = () => {
             UsersService.updatePasswordMe({ body: data }),
         onSuccess: ({ data }) => {
             // The change revoked every older token, this tab's included
-            localStorage.setItem("access_token", data.access_token)
+            setAccessToken(data.access_token)
             showSuccessToast("Password updated successfully")
             form.reset()
         },
-        onError: handleError.bind(showErrorToast),
+        onError: showApiError,
     })
 
     const onSubmit = async (data: FormData) => {

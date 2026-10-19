@@ -12,11 +12,12 @@ import { client } from "./client/client.gen"
 import { ThemeProvider } from "./components/ThemeProvider"
 import { Toaster } from "./components/ui/Sonner"
 import "./index.css"
+import { clearAccessToken, getAccessToken } from "./lib/authToken"
 import { routeTree } from "./routeTree.gen"
 
 client.setConfig({
     baseURL: import.meta.env.VITE_API_URL ?? "",
-    auth: () => localStorage.getItem("access_token") || "",
+    auth: () => getAccessToken() || "",
 })
 
 const handleApiError = (error: Error) => {
@@ -30,7 +31,7 @@ const handleApiError = (error: Error) => {
         (status === 403 &&
             (code === "user_inactive" || code === "company_inactive"))
     ) {
-        localStorage.removeItem("access_token")
+        clearAccessToken()
         window.location.href = "/login"
     }
 }
