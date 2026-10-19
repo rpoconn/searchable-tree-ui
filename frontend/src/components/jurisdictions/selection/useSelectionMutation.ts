@@ -1,6 +1,6 @@
-import { useMutation } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { AxiosError } from "axios"
-import { JurisdictionGridService } from "@/components/jurisdictions/grid/JurisdictionGridService"
+import { JurisdictionGridService as Service } from "@/components/jurisdictions/grid/JurisdictionGridService"
 import type { JurisdictionMode } from "@/components/jurisdictions/jurisdictionTypes"
 import useCustomToast from "@/hooks/useCustomToast"
 import { handleError } from "@/utils"
@@ -16,7 +16,7 @@ export type SubtreeChange = {
 }
 
 // Turns a jurisdiction, or it and everything selectable under it, on or off in
-// this scope.
+// this scope, then refetches what the change affects.
 // A change made against a version that has since moved on goes to onConflict.
 export function useSelectionMutation(
     mode: JurisdictionMode,
@@ -24,11 +24,12 @@ export function useSelectionMutation(
     onSettled: () => void,
     onConflict: (change: SubtreeChange) => void,
 ) {
+    const queryClient = useQueryClient()
     const { showErrorToast } = useCustomToast()
 
     return useMutation({
         mutationFn: ({ rootId, enabled, subtree, version }: SubtreeChange) =>
-            JurisdictionGridService.saveSelection(
+            Service.saveSelection(
                 mode,
                 companyId,
                 rootId,
@@ -46,7 +47,15 @@ export function useSelectionMutation(
             }
             handleError.call(showErrorToast, err)
         },
-        onSettled,
+        onSettled: () => {
+            queryClient.invalidateQueries({ queryKey: Service.keys.facets })
+            queryClient.invalidateQueries({
+                queryKey: Service.keys.companyIds(companyId),
+            })
+            // Dropping a company opt-in also drops it for every user in the company
+            queryClient.invalidateQueries({ queryKey: Service.keys.myIds })
+            onSettled()
+        },
     })
 }
 

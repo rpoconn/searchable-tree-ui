@@ -5,6 +5,7 @@ import {
     CompaniesService,
     type CompanyAdmin,
     type CompanyPublic,
+    type JurisdictionFacet,
     type JurisdictionGridRow,
     type JurisdictionRowsQuery,
     JurisdictionsService,
@@ -70,6 +71,32 @@ export class JurisdictionGridService {
     static sameTypeFilters(a: TypeFilters, b: TypeFilters) {
         const key = (t: TypeFilters) => JSON.stringify(pickedTypes(t).sort())
         return key(a) === key(b)
+    }
+
+    // The facets with the live picks, so the toolbar doesn't wait on the server;
+    // drops any pick no longer among a facet's options
+    static liveFacets(
+        facets: JurisdictionFacet[],
+        byType: TypeFilters,
+    ): JurisdictionFacet[] {
+        return facets.map((f) => ({
+            ...f,
+            value: (byType[f.type] ?? []).filter((id) =>
+                f.options.some((o) => o.id === id),
+            ),
+        }))
+    }
+
+    // An empty Available tab under no other filter: every licensed row is on
+    static allLicensedTaken(
+        filters: JurisdictionFilters,
+        licensedCount: number,
+    ) {
+        return (
+            filters.status === "available" &&
+            licensedCount > 0 &&
+            !JurisdictionGridService.hasFilters({ ...filters, status: "all" })
+        )
     }
 
     static toApiFilters(filters: JurisdictionFilters): ApiFilters {

@@ -1,5 +1,6 @@
 import type { JurisdictionPublic } from "@/client"
 import { flagUrlFor } from "@/components/jurisdictions/flags"
+import type { JurisdictionMode } from "@/components/jurisdictions/jurisdictionTypes"
 
 export type SelectionEntry = {
     jurisdiction: JurisdictionPublic
@@ -39,4 +40,19 @@ export function summarizeSelection(
     }
     walk(null)
     return entries
+}
+
+// What's on in this scope. A user's pick only counts while the company licenses it.
+export function selectionEntriesFor(
+    tree: JurisdictionPublic[],
+    mode: JurisdictionMode,
+    enabledIds: string[],
+    licensedIds: string[],
+): SelectionEntry[] {
+    const licensed = new Set(licensedIds)
+    return summarizeSelection(
+        tree,
+        new Set(enabledIds),
+        (j) => !j.is_structural && (mode === "company" || licensed.has(j.id)),
+    )
 }
